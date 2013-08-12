@@ -1,9 +1,6 @@
 import ij.IJ;
 import ij.ImagePlus;
-import ij.gui.ImageCanvas;
-import ij.gui.Overlay;
-import ij.gui.PointRoi;
-import ij.gui.Roi;
+import ij.gui.*;
 import ij.plugin.PlugIn;
 
 import java.awt.event.MouseEvent;
@@ -84,6 +81,22 @@ public class Annotationer implements PlugIn, MouseListener {
         int atX = 	srcCanv.offScreenX(e.getX());
         int atY = 	srcCanv.offScreenY(e.getY());
 
+        Roi pt = new PointRoi(atX+0.5, atY+0.5);
+        pt.setName("new?("+atX+","+atY+")");
+
+        Overlay currOverlay = srcCanv.getImage().getOverlay();
+
+        currOverlay.add(pt);
+        srcCanv.getImage().updateAndDraw();
+
+        GenericDialog gd = new GenericDialog("OK?");
+        gd.showDialog();
+        if (gd.wasCanceled()) {
+            currOverlay.remove(currOverlay.size()-1);
+            srcCanv.getImage().updateAndDraw();
+            return;
+        }
+
         // append line
         try {
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(annFile, true)));
@@ -92,12 +105,6 @@ public class Annotationer implements PlugIn, MouseListener {
         } catch (IOException e1) {
             //oh noes!
         }
-
-        Roi pt = new PointRoi(atX+0.5, atY+0.5);
-        pt.setName("new,("+atX+","+atY+")");
-
-        srcCanv.getImage().getOverlay().add(pt);
-        srcCanv.getImage().updateAndDraw();
     }
 
     public void mousePressed(MouseEvent e)  {}
