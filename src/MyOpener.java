@@ -56,11 +56,10 @@ public class MyOpener implements PlugIn {
 
     public void run(String s) {
 
-//		ArrayList<Float> t = new ArrayList<Float>(5);
-//		t.set(0, 5.6f);
-//		IJ.log(""+t.size());
-//		if (true) return;
-
+		ArrayList<Float> t = new ArrayList<Float>(5);
+		t.add(0, 5.6f);
+		IJ.log(""+t.size());
+		if (true) return;
 
         IJ.log("testing MyOpener...");
         String legend = "Plugin enables browsing&selecting file from some location and returns it's absolute path.";
