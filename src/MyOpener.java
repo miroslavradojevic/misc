@@ -3,7 +3,6 @@ import ij.plugin.PlugIn;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,7 +12,8 @@ import java.util.ArrayList;
  */
 public class MyOpener implements PlugIn {
 
-    public static String open(String message, boolean showPath) {
+    public static String open(String message, boolean showPath)
+	{
 
         IJ.showMessage(message);
 
@@ -56,12 +56,7 @@ public class MyOpener implements PlugIn {
 
     public void run(String s) {
 
-		ArrayList<Float> t = new ArrayList<Float>(5);
-		t.add(0, 5.6f);
-		IJ.log(""+t.size());
-		if (true) return;
-
-        IJ.log("testing MyOpener...");
+        System.out.println("testing MyOpener...");
         String legend = "Plugin enables browsing&selecting file from some location and returns it's absolute path.";
         IJ.log("\n\t "+MyOpener.open(legend, true));
 

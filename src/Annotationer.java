@@ -25,7 +25,7 @@ public class Annotationer implements PlugIn, MouseListener {
 
     public void run(String s) {
 
-        annFile = MyOpener.open("Open annotation file [ ."+ext+" extension ]", false);
+		annFile = MyOpener.open("Open annotation file [ ."+ext+" extension ]", false);
 
         if (annFile==null) return;
 
