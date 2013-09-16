@@ -4,6 +4,8 @@ syntax: regexp
 ^.metadata/ 	# root folder
 ^.settings/	# root folder
 ^build/		# to ignore the whole folder use this one
+^ij-examples/build/*
+
 ## use glob syntax.
 syntax: glob
 
@@ -12,11 +14,10 @@ syntax: glob
 *.class
 *.iml
 *.properties
-advantra/*.jar
-advantra/*.class
-advantra/build
-advantra/build/*
-advantra/bin
+misc/*.jar
+misc/*.class
+
+ij-examples/build/**
 
 .classpath
 .project

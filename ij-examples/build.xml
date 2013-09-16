@@ -38,7 +38,8 @@
     <path id="classpath">
         <!-- external modules -->
         <pathelement location="${env.HOME}/jarlib/ij.jar"/>
-        <!-- <pathelement location="${env.HOME}/jarlib/imagescience.jar"/>
+        <pathelement location="${env.HOME}/jarlib/imagescience.jar"/>
+        <!--
         <pathelement location="${env.HOME}/jarlib/flanagan.jar"/>
         <pathelement location="${env.HOME}/jarlib/weka.jar"/>
         <pathelement location="${env.HOME}/jarlib/jfreechart-1.0.14.jar"/>
