@@ -1,2 +1,0 @@
-javac -cp /home/miroslav/jarlib/ij.jar -g ClusteringDemo.java
-java  -cp .:/home/miroslav/jarlib/ij.jar ClusteringDemo

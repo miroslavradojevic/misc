@@ -1,3 +1,5 @@
+package ij;
+
 import ij.IJ;
 import ij.plugin.PlugIn;
 

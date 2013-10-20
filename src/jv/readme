@@ -1,0 +1,8 @@
+# old compile - call scheme
+javac -cp /home/miroslav/jarlib/ij.jar -g ClusteringDemo.java
+java  -cp .:/home/miroslav/jarlib/ij.jar ClusteringDemo
+
+
+# new calls (builds as a whole - using build.xml)
+java  -cp ./misc_.jar:/home/miroslav/jarlib/ij.jar jv.ClusteringDemo
+java  -cp ./misc_.jar:/home/miroslav/jarlib/ij.jar jv.CreateMosaic
