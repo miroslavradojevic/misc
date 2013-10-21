@@ -20,10 +20,9 @@ public class ClusteringDemo {
 
     public static void main (String[] args) {
 
-
-		float minx = 20, miny = 20;
-		float maxx = 100, maxy = 100;
-		float minr = 2, maxr = 5;
+		float minx = 20,    miny = 20;
+		float maxx = 100,   maxy = 100;
+		float minr = 2,     maxr = 5;
 
 		int H = 120, W = 120;
 
