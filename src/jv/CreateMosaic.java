@@ -9,7 +9,10 @@ package jv;
 public class CreateMosaic {
 
 	public static void main (String[] args) {
-		System.out.println("Create mosaic...");
+
+		System.out.println("Create mosaic..."+args.length);
+
+
 	}
 
 }
