@@ -17,7 +17,6 @@ import java.util.ArrayList;
 public class CreateMosaic {
 
 
-
 	public static void main (String[] args) {
 
         ArrayList<ImagePlus>    imgs    = new ArrayList<ImagePlus>();
@@ -36,7 +35,7 @@ public class CreateMosaic {
             File f = new File(args[0]);
             String directory = f.getAbsolutePath();// args[0];
 
-            System.out.println("source directory : \n" + directory);
+            //System.out.println("source directory : \n" + directory);
 
             String[] listDirectory = f.list();
 
@@ -102,10 +101,11 @@ public class CreateMosaic {
             mosaic = new ImagePlus("mosaic", is);
 
             // fill it with values, go image per image
-            for (int k=0; k<1; k++) { // imgs.size()
+            for (int k=0; k<imgs.size(); k++) { //
 
-                System.out.println("adding image "+k);
-                for (int x=0; x<dims.get(k)[0]; x++) {
+                System.out.print("\nadding image "+k+" ... ");
+
+				for (int x=0; x<dims.get(k)[0]; x++) {
 
                     for (int y=0; y<dims.get(k)[1]; y++) {
 
@@ -116,14 +116,12 @@ public class CreateMosaic {
                             int globY = roots.get(k)[1] - startY + y;
                             int globZ = roots.get(k)[2] - startZ + z;
 
-                            //System.out.println(x+","+y+","+z+","+k);
-
                             // value to set
                             int val = imgs.get(k).getStack().getProcessor(z+1).get(x,y);
+							int curr_val = mosaic.getStack().getProcessor(globZ+1).get(globX, globY);
 
-
-
-                            mosaic.getStack().getProcessor(globZ+1).set(globX, globY, val);
+							if (val>curr_val)
+								mosaic.getStack().getProcessor(globZ+1).set(globX, globY, val);
 
                         }
 
@@ -131,6 +129,7 @@ public class CreateMosaic {
 
                 }
 
+				System.out.println(" done.");
 
             }
 
@@ -139,7 +138,7 @@ public class CreateMosaic {
             //mosaic.show();
             String outPath = System.getProperty("user.home")+File.separator+"mosaic.tif";
             new FileSaver(mosaic).saveAsTiffStack(outPath);
-            System.out.println(outPath + " saved.");
+            System.out.println(outPath + " exported.");
 
         }
         else {
@@ -147,10 +146,6 @@ public class CreateMosaic {
             System.out.println("needs one argument: folder where the files to mosaic are...");
 
         }
-
-
-
-
 
 	}
 
