@@ -7,6 +7,7 @@ import ij.process.ByteProcessor;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,6 +17,13 @@ import java.util.ArrayList;
  */
 public class CreateMosaic {
 
+    // to align together stacks of images from nl1a diadem dataset
+    // expects folder with stack images
+    // name of each stack contains comma separated 3d root location og the stack
+    // necessary to group them and align so that ground truth can be plotted over properly
+    // example call:
+    // java -cp ~/misc/misc_.jar:/home/miroslav/jarlib/ij.jar jv.CreateMosaic /home/miroslav/Copy/nl1a/ss2/stacks
+
 
 	public static void main (String[] args) {
 
@@ -23,9 +31,10 @@ public class CreateMosaic {
         ArrayList<int[]>        roots   = new ArrayList<int[]>();
         ArrayList<int[]>        dims    = new ArrayList<int[]>();
 
-        int dimX=0,                     dimY=0,                     dimZ=0;
-        int startX=Integer.MAX_VALUE,   startY=Integer.MAX_VALUE,   startZ=Integer.MAX_VALUE;
-        int endX=Integer.MIN_VALUE,     endY=Integer.MIN_VALUE,     endZ=Integer.MIN_VALUE;
+        int dimX=0,                         dimY=0,                     dimZ=0;
+        //int startX=Integer.MAX_VALUE,     startY=Integer.MAX_VALUE,   startZ=Integer.MAX_VALUE;
+        int startX=0,                       startY=0,                   startZ=0;
+        int endX=Integer.MIN_VALUE,         endY=Integer.MIN_VALUE,     endZ=Integer.MIN_VALUE;
 
 
         ImagePlus mosaic;
@@ -49,21 +58,28 @@ public class CreateMosaic {
                     String fileName = filePath.substring(filePath.lastIndexOf("/")+1, filePath.lastIndexOf("."));
                     String fileExt = filePath.substring(filePath.lastIndexOf(".")+1);
 
-                    //System.out.println("file path : "+filePath);
                     //System.out.println("file exts : "+fileExt);
 
                     if (fileExt.equalsIgnoreCase("TIF")) {
 
                         ImagePlus imp = new ImagePlus(filePath);
-                        imgs.add(imp);
+                        imgs.add(imp);   System.out.println("adding... "+filePath);
 
-                        int c = 0x002C;
+                        int c = 0x002C;  // comma
                         int loc1 = fileName.indexOf(c, 0);
                         int loc2 = fileName.lastIndexOf(c);
 
+                        // these are the roots of each image
                         int locX = Integer.valueOf(fileName.substring(0,loc1));
                         int locY = Integer.valueOf(fileName.substring(loc1+1,loc2));
                         int locZ = Integer.valueOf(fileName.substring(loc2+1));
+
+                        // in order to be compatible with reconstruction coordinates
+                        // ignore negative values - consider only positive locations
+                        // otherwise reconstruction is shifted
+
+                        // loop local coordinates (0,0,0)->(W,H,L) and add the bias
+                        // if they are negative after bias - just ignore to stay aligned
 
                         int lenX = imp.getWidth();
                         int lenY = imp.getHeight();
@@ -72,11 +88,11 @@ public class CreateMosaic {
                         roots.add(new int[]{locX, locY, locZ});
                         dims.add(new int[]{lenX, lenY, lenZ});
 
-                        if (locX<startX) startX = locX; // this is index
-                        if (locY<startY) startY = locY;
-                        if (locZ<startZ) startZ = locZ;
+                        //if (locX<startX) startX = locX; // this is index
+                        //if (locY<startY) startY = locY;
+                        //if (locZ<startZ) startZ = locZ;
 
-                        if (locX+lenX-1>endX) endX = locX+lenX-1; // this is index
+                        if (locX+lenX-1>endX) endX = locX+lenX-1; // endX,Y,Z represents index
                         if (locY+lenY-1>endY) endY = locY+lenY-1;
                         if (locZ+lenZ-1>endZ) endZ = locZ+lenZ-1;
 
@@ -86,9 +102,11 @@ public class CreateMosaic {
 
             }
 
-            dimX = endX-startX+1;
-            dimY = endY-startY+1;
-            dimZ = endZ-startZ+1;
+            System.out.println(imgs.size()+" images");
+
+            dimX = endX-startX+1; // actually endX+1
+            dimY = endY-startY+1; // endY+1
+            dimZ = endZ-startZ+1; // endZ+1
 
             //System.out.println("["+dimX+"("+startX+" -- "+endX+"), "+dimY+"("+startY+" -- "+endY+"), "+dimZ+"("+startZ+" -- "+endZ+")]");
 
@@ -103,25 +121,31 @@ public class CreateMosaic {
             // fill it with values, go image per image
             for (int k=0; k<imgs.size(); k++) { //
 
-                System.out.print("\nadding image "+k+" ... ");
+                //if(!imgs.get(k).getTitle().equalsIgnoreCase("0,0,0.tif")) continue;
 
-				for (int x=0; x<dims.get(k)[0]; x++) {
+                System.out.print("\nadding image "+imgs.get(k).getTitle()+" at "+Arrays.toString(roots.get(k)));
 
-                    for (int y=0; y<dims.get(k)[1]; y++) {
+				for (int x=0; x<dims.get(k)[0]; x++) { // x++
 
-                        for (int z=0; z<dims.get(k)[2]; z++) {
+                    for (int y=0; y<dims.get(k)[1]; y++) { // y++
+
+                        for (int z=0; z<dims.get(k)[2]; z++) { // z++
 
                             // global location
-                            int globX = roots.get(k)[0] - startX + x;
-                            int globY = roots.get(k)[1] - startY + y;
-                            int globZ = roots.get(k)[2] - startZ + z;
+                            int globX = roots.get(k)[0]  + x;   //-  startX
+                            int globY = roots.get(k)[1]  + y;   // - startY
+                            int globZ = roots.get(k)[2]  + z;   // - startZ
 
-                            // value to set
-                            int val = imgs.get(k).getStack().getProcessor(z+1).get(x,y);
-							int curr_val = mosaic.getStack().getProcessor(globZ+1).get(globX, globY);
+                            if (globX>0 && globY>0 && globZ>0) {  // ignore negative so that the reconstruction is properly positioned
 
-							if (val>curr_val)
-								mosaic.getStack().getProcessor(globZ+1).set(globX, globY, val);
+                                // value to set
+                                int val = imgs.get(k).getStack().getProcessor(z+1).get(x,y);
+                                int curr_val = mosaic.getStack().getProcessor(globZ+1).get(globX, globY);
+
+                                if (val>curr_val)
+                                    mosaic.getStack().getProcessor(globZ+1).set(globX, globY, val);
+
+                            }
 
                         }
 
@@ -133,9 +157,6 @@ public class CreateMosaic {
 
             }
 
-
-
-            //mosaic.show();
             String outPath = System.getProperty("user.home")+File.separator+"mosaic.tif";
             new FileSaver(mosaic).saveAsTiffStack(outPath);
             System.out.println(outPath + " exported.");
