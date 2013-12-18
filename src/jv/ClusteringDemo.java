@@ -75,7 +75,27 @@ public class ClusteringDemo {
 		FileSaver fs = new FileSaver(im);
 		fs.saveAsTiff("clustering2d.tif");
 
+        /*
+        example with indexes
+         */
+
+        System.out.println("INPUT");
+        // random numbers in some interval, each has a value and index associated
+        int[] values = new int[20];
+        for (int i = 0; i < 20; i++) {
+            values[i] = new Random().nextInt(10); // 0-9
+        }
+
+
+        // table with precomputed inter-distances
+        int[][] dists = new int[20][20];
+
+
+        // show labels
+
 		System.out.println("done.");
+
+
 
     }
 
