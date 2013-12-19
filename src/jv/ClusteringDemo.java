@@ -216,59 +216,6 @@ public class ClusteringDemo {
 
 	}
 
-	public static int[] clustering(int[] idxs, int[][] dists, int threshold_dists)
-	{
-		// indxs represent indexes of values that need to be clustered,
-		// dists are the distances,
-		// threshold_dists is the distance limit
-		// output is list of unique labels
-		int[] labels = new int[idxs.length];
-		for (int i = 0; i < labels.length; i++) labels[i] = i;
-
-		System.out.println("INIT. LABELS:");
-		System.out.println(Arrays.toString(labels));
-
-		for (int i = 0; i < idxs.length; i++) {
-
-			// one versus the rest
-			for (int j = 0; j < idxs.length; j++) {
-
-				//
-				if (i != j) {
-
-					if (dists[i][j]<=threshold_dists) {
-
-						if (labels[j] != labels[i]) {
-
-							int currLabel = labels[j];
-							int newLabel  = labels[i];
-
-							labels[j] = newLabel;
-
-							//set all that also were currLabel to newLabel
-							for (int k = 0; k < labels.length; k++)
-								if (labels[k]==currLabel)
-									labels[k] = newLabel;
-
-						}
-
-					}
-
-				}
-
-			}
-
-		}
-
-		System.out.println("OUT LABELS:");
-//		for (int ii = 0; ii < labels.length; ii++)
-//			System.out.print(labels[ii]+" ");
-		System.out.println(Arrays.toString(labels));
-
-		return labels;
-
-	}
-
 	public static int[] clustering(Vector<float[]> disks) //[x, y, r]  // Vector<float[]>
 	{
 
@@ -319,6 +266,59 @@ public class ClusteringDemo {
 		System.out.println();
 
 		return labels; // cluster labels for each disc
+
+    }
+
+    public static int[] clustering(int[] idxs, int[][] dists, int threshold_dists)
+    {
+        // indxs represent indexes of values that need to be clustered,
+        // dists are the distances,
+        // threshold_dists is the distance limit
+        // output is list of unique labels
+        int[] labels = new int[idxs.length];
+        for (int i = 0; i < labels.length; i++) labels[i] = i;
+
+        System.out.println("INIT. LABELS:");
+        System.out.println(Arrays.toString(labels));
+
+        for (int i = 0; i < idxs.length; i++) {
+
+            // one versus the rest
+            for (int j = 0; j < idxs.length; j++) {
+
+                //
+                if (i != j) {
+
+                    if (dists[i][j]<=threshold_dists) {
+
+                        if (labels[j] != labels[i]) {
+
+                            int currLabel = labels[j];
+                            int newLabel  = labels[i];
+
+                            labels[j] = newLabel;
+
+                            //set all that also were currLabel to newLabel
+                            for (int k = 0; k < labels.length; k++)
+                                if (labels[k]==currLabel)
+                                    labels[k] = newLabel;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        System.out.println("OUT LABELS:");
+//		for (int ii = 0; ii < labels.length; ii++)
+//			System.out.print(labels[ii]+" ");
+        System.out.println(Arrays.toString(labels));
+
+        return labels;
 
     }
 
