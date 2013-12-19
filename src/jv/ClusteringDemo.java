@@ -10,7 +10,9 @@ import ij.process.ByteProcessor;
 
 import java.awt.*;
 import java.awt.Color;
+import java.awt.geom.Arc2D;
 import java.lang.System;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Vector;
@@ -95,6 +97,7 @@ public class ClusteringDemo {
         // random numbers in some interval, each has a value and index associated
 		int N = 15;
 		int RANGE = 40;
+        int CLUSTER_TH = 1;
         int[] values = new int[N];
 		int[] values_idx = new int[N];
         for (int i = 0; i < N; i++) {
@@ -117,42 +120,79 @@ public class ClusteringDemo {
 					dists[i][j] = Math.abs(values[i]-values[j]);
 					dists[j][i] = Math.abs(values[i]-values[j]);
 				}
-
 			}
 		}
+
 		System.out.println("\nDISTS:\n");
 		for (int k = 0; k < dists.length; k++) {
 			System.out.println(Arrays.toString(dists[k]));
 		}
-
-		// cluster labels
-		int[] lab2 = clustering(values_idx, dists, 5);
 
 		// show clusters in plot
 		float[] plot_x = new float[values.length];
 		for (int i=0; i<values.length; i++) plot_x[i] = (float) values[i];
 		float[] plot_y = new float[values.length];
 
-		Plot pl = new Plot("", "samples", "", new float[1], new float[1]);
-		pl.setLimits(0, RANGE, 0, 1.2);
-		Arrays.fill(plot_y, 0);
-		pl.addPoints(plot_x, plot_y, Plot.X);
-		Arrays.fill(plot_y, 1);
-		pl.addPoints(plot_x, plot_y, Plot.X);
+		Plot pl1 = new Plot("", "samples", "", new float[1], new float[1]);
+		pl1.setLimits(0, RANGE, 0, 1.2);
 
-		// plot vertical Line
+        Arrays.fill(plot_y, 1);
+		pl1.addPoints(plot_x, plot_y, Plot.CIRCLE);
 
+		// plot vertical Lines for each value
+        plot_y = new float[]{0, 1};
+        plot_x = new float[2]; // {values[0], values[0]};
+        for (int k=0; k<values.length; k++) {
+            plot_x[0] = values[k];
+            plot_x[1] = values[k];
+            pl1.addPoints(plot_x, plot_y, Plot.LINE);
+        }
+        pl1.show();
 
-		plot_y = new float[]{0, 1};
-		plot_x = new float[]{values[0], values[0]};
-		pl.setColor(Color.BLUE);
-		pl.addPoints(plot_x, plot_y, Plot.LINE);
+        // cluster indexes of some values
+        int[] lab2 = clustering(values_idx, dists, CLUSTER_TH); // lab2 will contain a cluster label for every value submitted
+        // final outputs  - use labels to provide the final output
+        ArrayList<float[]> ex = extracting(lab2, values_idx, values); // there is a direct correspondence values_idx ~
 
+        for (int i = 0; i < ex.size(); i++) {
+            System.out.println(""+ex.get(i)[0]+" , "+ex.get(i)[1]+ " elements");
+        }
 
-//		pl.drawArrow(values[0], 0, values[0], 1, 2);
-//		pl.drawArrow(values[0]+1, 0, values[0], 1, 2);
-//		pl.drawArrow(values[0] + 10, 10, values[0] + 10, 15, 2);
-		pl.show();
+        Plot pl2 = new Plot("", "samples", "", new float[1], new float[1]);
+        pl2.setLimits(0, RANGE, 0, 1.2);
+
+        // plot vertical Lines for each value in it's cluster color
+
+        c = new Color[N];
+        for (int i = 0; i < N; i++) c[i] = getRandomColor();
+
+        plot_y = new float[]{0, 1};
+        plot_x = new float[2];//{values[0], values[0]};
+        for (int k=0; k<values.length; k++) {
+            plot_x[0] = values[k];
+            plot_x[1] = values[k];
+            pl2.setColor(c[lab2[k]]);
+            pl2.setLineWidth(2);
+            pl2.addPoints(plot_x, plot_y, Plot.LINE);
+        }
+
+        for (int k=0; k<values.length; k++) {
+            pl2.setColor(c[lab2[k]]);
+            pl2.addLabel((float) values[k]/RANGE, 0.1, Integer.toString(lab2[k]));
+
+        }
+
+        // show final clusters
+        float[] cls_x = new float[ex.size()];
+        float[] cls_y = new float[ex.size()];
+        Arrays.fill(cls_y, 0.5f);
+        for (int i=0; i<ex.size(); i++)
+            cls_x[i] = ex.get(i)[0]; // /RANGE
+        pl2.setColor(Color.BLACK);
+
+        pl2.addPoints(cls_x, cls_y, Plot.TRIANGLE);
+
+        pl2.show();
 
 		System.out.println("done.");
 
@@ -280,6 +320,40 @@ public class ClusteringDemo {
 
 		return labels; // cluster labels for each disc
 
-	}
+    }
+
+    public static ArrayList<float[]> extracting(int[] labels, int[] idxs, int[] vals) {
+
+        boolean[] checked = new boolean[idxs.length];
+        ArrayList<float[]> out = new ArrayList<float[]>();
+
+        for (int i = 0; i < idxs.length; i++) {
+            if (!checked[i]) {
+
+                float centroid = vals[ idxs[i] ];
+                int count = 1;
+                checked[i] = true;
+
+                // check the rest
+                for (int j = i+1; j < idxs.length; j++) {
+                    if (!checked[j]) {
+                        if (labels[j]==labels[i]) {
+
+                            centroid += vals[ idxs[j] ];
+                            count++;
+                            checked[j] = true;
+
+                        }
+                    }
+                }
+
+                out.add(new float[]{centroid/count, count});
+
+            }
+        }
+
+        return out;
+
+    }
 
 }
