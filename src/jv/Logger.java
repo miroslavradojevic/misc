@@ -47,7 +47,6 @@ public class Logger {
             logWriter.close();
         } catch (FileNotFoundException ex) {}
 
-
         /*
             initialize detection log file
          */
