@@ -1,4 +1,4 @@
-package ij;
+package imj;
 
 import java.io.*;
 

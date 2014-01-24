@@ -1,4 +1,4 @@
-package ij;
+package imj;
 
 import ij.IJ;
 import ij.plugin.PlugIn;
@@ -18,6 +18,7 @@ public class MyOpener implements PlugIn {
 	{
 
         IJ.showMessage(message);
+
 
 		/*
 		 * based on File_Opener.java ij source code

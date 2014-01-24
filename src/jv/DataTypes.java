@@ -5,7 +5,6 @@ package jv;
  * User: miroslav
  * Date: 11/28/13
  * Time: 9:22 AM
- * To change this template use File | Settings | File Templates.
  */
 public class DataTypes {
 

@@ -1,3 +1,10 @@
+<!--
+needs correct reference to folders:
+${env.HOME}/ImageJ/plugins/         output folder
+${env.HOME}/ImageJ/jre_prev/lib/    to be able to compile for earlier JRE
+${env.HOME}/jarlib/                 libraries used
+ -->
+
 <project name="misc" default="" basedir=".">
 
     <dirname property="basedir" file="${ant.file}"/>
@@ -54,14 +61,17 @@
         </dirset>
 
     </path>
-    <!-- compilation command (compile & copy to build folder) -->
+
     <!-- <bootclasspath refid="bootclasspath"/>  -->
-    <!--target="1.5" -->
-    <target name="compile" description="Compile module">
+    <target name="compile" description="Compile module"> <!-- compilation command (compile & copy to build folder) -->
 
         <mkdir dir="${build}"/>
 
-        <javac target="1.5" destdir="${build}" srcdir="${src}" debug="true" debuglevel="lines,vars,source">
+        <delete includeEmptyDirs="true"> <!-- delete the contents of build before compiling -->
+            <fileset dir="${build}" includes="**/*"/>
+        </delete>
+
+        <javac target="1.5" destdir="${build}" srcdir="${src}" debug="true" debuglevel="lines,vars,source"> <!-- compile with 1.5 ver -->
             <classpath refid="classpath"/>
             <src refid="sourcepath"/>
         </javac>
@@ -72,11 +82,5 @@
             </fileset>
         </copy>
     </target>
-    <!--
-needs folders:
-${env.HOME}/ImageJ/plugins/         output folder
-${env.HOME}/ImageJ/jre_prev/lib/    to be able to compile for earlier JRE
-${env.HOME}/jarlib/                 libraries used
- -->
 
 </project>

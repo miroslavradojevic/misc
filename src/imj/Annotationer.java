@@ -1,4 +1,4 @@
-package ij;
+package imj;
 
 import ij.IJ;
 import ij.ImagePlus;

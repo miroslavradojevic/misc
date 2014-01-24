@@ -1,3 +1,5 @@
+package imj;
+
 import java.awt.Color;
 
 import ij.ImagePlus;
