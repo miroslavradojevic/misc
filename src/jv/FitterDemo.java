@@ -18,13 +18,19 @@ public class FitterDemo {
 
     public static void main (String[] args) {
 
-        System.out.println("NCC fitting demo...");
+        System.out.println("fitting 1D profiles demo...");
 
         // will fit profiles ranging from 0 to 1 (min/max normalized)
         // profile length is Nbins, and they are products of min/max normalization
 
-        int Nbins = 50;
-        float[] x          =   new float[Nbins];
+        int Nbins = 15;
+		int Nrandom = 30;
+		int Ngauss = Nrandom;
+
+		/*
+			aux variable for plotting
+		 */
+		float[] x          =   new float[Nbins];
         for (int i=0; i<Nbins; i++) x[i] = i;
 
         Random rand = new Random();
@@ -33,7 +39,7 @@ public class FitterDemo {
 
         ArrayList<float[]> f = new ArrayList<float[]>();
 
-        for (int k=0; k<30; k++) {
+        for (int k=0; k<Nrandom; k++) {
             float[] p_rand     =   new float[Nbins];
             for (int i=0; i<Nbins; i++) p_rand[i] = rand.nextFloat();
             f.add(p_rand);
@@ -41,9 +47,9 @@ public class FitterDemo {
             is_input.addSlice(p.getProcessor());
         }
 
-        for (int k=0; k<30; k++) {
+        for (int k=0; k<Ngauss; k++) {
             float[] p_gauss    =   new float[Nbins];
-            float mu    = 0.5f * Nbins + ((rand.nextFloat() * 2f) - 1) * 0.25f * Nbins;
+            float mu    = 0.5f * Nbins + ((rand.nextFloat() * 2f) - 1) * 0.2f * Nbins;
             float sig   = rand.nextFloat() * 0.5f * Nbins;
             for (int i=0; i<Nbins; i++) p_gauss[i] = (float) Math.exp(-(i - mu) * (i - mu) / (2 * sig * sig));
             f.add(p_gauss);
@@ -76,7 +82,7 @@ public class FitterDemo {
         // show the scores
         float[] xx = new float[ncc_scores.length];
         for (int i=0; i<xx.length; i++) xx[i] = i;
-        Plot p = new Plot("", "# input profile", "NCC score", xx, ncc_scores);
+        Plot p = new Plot("NCC fitting scores", "# input profile", "NCC score", xx, ncc_scores);
         p.setLimits(0, ncc_scores.length, -1, 1);
         p.show();
 
