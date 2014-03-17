@@ -12,7 +12,7 @@ import java.util.Random;
 
 /**
  * Created by miroslav on 3/4/14.
- * example how to visualize using bars (short vectors)
+ * example on usage of the Fitter class
  */
 public class FitterDemo {
 
@@ -21,6 +21,8 @@ public class FitterDemo {
         System.out.println("fitting 1D profiles demo...");
 
         // will fit profiles ranging from 0 to 1 (min/max normalized)
+		// random profiles, gaussian profiles and profiles taken from real scenario
+		// (automatically or manually using LineTool plugin)
         // profile length is Nbins, and they are products of min/max normalization
 
         int Nbins = 15;
@@ -37,8 +39,9 @@ public class FitterDemo {
 
         ImageStack is_input = new ImageStack(528,255);
 
-        ArrayList<float[]> f = new ArrayList<float[]>();
+        ArrayList<float[]> f = new ArrayList<float[]>();   // contains inputs for testing
 
+		// stack of random profiles
         for (int k=0; k<Nrandom; k++) {
             float[] p_rand     =   new float[Nbins];
             for (int i=0; i<Nbins; i++) p_rand[i] = rand.nextFloat();
