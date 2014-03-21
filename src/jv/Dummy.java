@@ -41,6 +41,37 @@ public class Dummy {
 			System.out.println("it is 2");
 		}
 
+        float[][][] aaa = new float[3][2][];
+        aaa[0] = null;
+
+        aaa[1][0] = null;
+        aaa[1][1] = new float[5];
+
+        aaa[2][0] = null;
+        aaa[2][1] = new float[10];
+
+        // plot it
+        for (int ii=0; ii< aaa.length; ii++) {
+            if (aaa[ii]!=null) {
+                for (int jj=0; jj<aaa[ii].length; jj++) {
+                    if (aaa[ii][jj]!=null) {
+                        IJ.log(Arrays.toString(aaa[ii][jj]));
+
+//                        for (int kk=0; kk<aaa[ii][jj].length; kk++) {
+
+//                        }
+                    }
+                    else {
+                        IJ.log(Arrays.toString(aaa[ii][jj]));
+                    }
+                }
+            }
+            else {
+                IJ.log(Arrays.toString(aaa[ii]));
+            }
+        }
+
+
     }
 
 }
