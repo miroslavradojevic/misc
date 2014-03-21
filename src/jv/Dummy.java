@@ -35,6 +35,12 @@ public class Dummy {
         IJ.log(Arrays.toString(ar[0][2]));
         IJ.log(Arrays.toString(ar[0][3]));
 
+		int var = Integer.MIN_VALUE;
+		var = -2;
+		if (var==-2) {
+			System.out.println("it is 2");
+		}
+
     }
 
 }
