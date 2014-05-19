@@ -3,6 +3,8 @@ package imj;
 import ij.IJ;
 import ij.plugin.PlugIn;
 
+import java.util.Arrays;
+
 /**
  * Created with IntelliJ IDEA.
  * User: miroslav
