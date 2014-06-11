@@ -8,9 +8,7 @@ import ij.gui.Plot;
 import ij.io.FileSaver;
 import ij.process.ByteProcessor;
 
-import java.awt.*;
 import java.awt.Color;
-import java.awt.geom.Arc2D;
 import java.lang.System;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -152,7 +150,7 @@ public class ClusteringDemo {
         // cluster indexes of some values
         int[] lab2 = clustering(values_idx, dists, CLUSTER_TH); // lab2 will contain a cluster label for every value submitted
         // final outputs  - use labels to provide the final output
-        ArrayList<float[]> ex = extracting(lab2, values_idx, values); // there is a direct correspondence values_idx ~
+        ArrayList<float[]> ex = extracting(lab2, values); // there is a direct correspondence values_idx ~
 
         for (int i = 0; i < ex.size(); i++) {
             System.out.println(""+ex.get(i)[0]+" , "+ex.get(i)[1]+ " elements");
@@ -216,6 +214,10 @@ public class ClusteringDemo {
 
 	}
 
+	/*
+		problem 1: group centroids with different radiuses (disks) to the same cluster if they overlap
+		this way each component maintains it's own radius (useful when clustering regions of different disk sizes)
+	 */
 	public static int[] clustering(Vector<float[]> disks) //[x, y, r]  // Vector<float[]>
 	{
 
@@ -269,6 +271,10 @@ public class ClusteringDemo {
 
     }
 
+	/*
+		problem 2: group centroids with fixed radius used as threshold distance
+		(useful when clustering regions with the same disk sizes)
+	 */
     public static int[] clustering(int[] idxs, int[][] dists, int threshold_dists)
     {
         // indxs represent indexes of values that need to be clustered,
@@ -322,24 +328,27 @@ public class ClusteringDemo {
 
     }
 
-    public static ArrayList<float[]> extracting(int[] labels, int[] idxs, int[] vals) {
+	/*
+		use output of clustering to give out the final cluster centroids
+	 */
+    public static ArrayList<float[]> extracting(int[] labels, int[] vals) { // int[] idxs,
 
-        boolean[] checked = new boolean[idxs.length];
+        boolean[] checked = new boolean[labels.length];
         ArrayList<float[]> out = new ArrayList<float[]>();
 
-        for (int i = 0; i < idxs.length; i++) {
+        for (int i = 0; i < labels.length; i++) {
             if (!checked[i]) {
 
-                float centroid = vals[ idxs[i] ];
+                float centroid = vals[ i ]; // idxs[i]
                 int count = 1;
                 checked[i] = true;
 
                 // check the rest
-                for (int j = i+1; j < idxs.length; j++) {
+                for (int j = i+1; j < labels.length; j++) {
                     if (!checked[j]) {
                         if (labels[j]==labels[i]) {
 
-                            centroid += vals[ idxs[j] ];
+                            centroid += vals[ j ]; // idxs[j]
                             count++;
                             checked[j] = true;
 
