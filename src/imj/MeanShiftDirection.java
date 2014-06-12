@@ -7,6 +7,7 @@ import ij.gui.Overlay;
 import ij.gui.PointRoi;
 import ij.plugin.PlugIn;
 import ij.process.ByteProcessor;
+import jv.Sorting;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -32,17 +33,16 @@ public class MeanShiftDirection implements PlugIn {
 
 		ArrayList<float[]> vxy = genDirectionsXY(nr_directions);
 
-
-		float[][] vxy_conv = run(vxy, max_iter, epsilon, alfa); 					// mean-shift
+		/*
+			extract number of directions and estimate them: ArrayList<float[]> vxy -> ArrayList<float[]> cls
+		 */
+		float[][] vxy_conv = meanShift(vxy, max_iter, epsilon, alfa); 				// mean-shift, vxy are normalized
 		int[] out_lab = clustering(vxy_conv, alfa); 								// cluster convergences
 		ArrayList<float[]> cls = extracting(out_lab, vxy, min_cluster_cnt);      	// extract clusters
 
-		for (int ii=0; ii<cls.size(); ii++) {
-			IJ.log("cluster "+ii+" : " + Arrays.toString(cls.get(ii)));
-		}
+		for (int ii=0; ii<cls.size(); ii++) IJ.log("cluster " + ii + " : " + Arrays.toString(cls.get(ii)));
 
-
-		// visualize
+		// visualize clusters
 		Overlay init_directions = getDrawing(vxy, .3f*W, null);
 		Color[] yellows = new Color[vxy.size()];
 		Arrays.fill(yellows, Color.YELLOW);
@@ -60,8 +60,8 @@ public class MeanShiftDirection implements PlugIn {
 
 	}
 
-
-	private ArrayList<float[]> genDirectionsXY(int nr_directions){
+	private ArrayList<float[]> genDirectionsXY(int nr_directions)
+	{
 
 		ArrayList<Float> thetas = new ArrayList<Float>();
 		int[] N = new int[nr_directions];
@@ -116,17 +116,19 @@ public class MeanShiftDirection implements PlugIn {
 
 	}
 
-	private void getXY(float theta, float[] outXY){
+	private void getXY(float theta, float[] outXY)
+	{
 		// r is considered to be 1
 		outXY[0] = (float) - Math.sin(theta);
 		outXY[1] = (float)   Math.cos(theta);
 	}
 
-	private	float[][]	run(ArrayList<float[]> v, int max_iter, float epsilon, float alfa){
+	private	float[][]	meanShift(ArrayList<float[]> v, int max_iter, float epsilon, float alfa) // v are directions, should be normalized
+	{
 
 		float[][] v_conv = new float[v.size()][2];
 		for (int i = 0; i < v.size(); i++) {
-			v_conv[i][0] = v.get(i)[0];
+			v_conv[i][0] = v.get(i)[0]; // should be normalized
 			v_conv[i][1] = v.get(i)[1];
 		}
 
@@ -139,9 +141,11 @@ public class MeanShiftDirection implements PlugIn {
 
 			do {
 
-				runOne(v_conv[i], new_v, v, alfa);
+				runOne(v_conv[i], new_v, v, alfa); // new_v is normalized
 
-				d = Math.acos(new_v[0] * v_conv[i][0] + new_v[1] * v_conv[i][1]);
+				float dot_prod = new_v[0] * v_conv[i][0] + new_v[1] * v_conv[i][1];
+				dot_prod = (dot_prod>1)? 1 : dot_prod;
+				d = Math.acos(dot_prod);
 
 				v_conv[i][0] = new_v[0];
 				v_conv[i][1] = new_v[1];
@@ -155,7 +159,8 @@ public class MeanShiftDirection implements PlugIn {
 	}
 
 	// v are unit direction vectors in 2d
-	private void runOne(float[] curr_v, float[] new_v, ArrayList<float[]> v, float alfa){
+	private void runOne(float[] curr_v, float[] new_v, ArrayList<float[]> v, float alfa)
+	{
 
 		float sum 	= 0;
 		new_v[0] 	= 0;
@@ -185,7 +190,8 @@ public class MeanShiftDirection implements PlugIn {
 
 	}
 
-	private Overlay getDrawing(ArrayList<float[]> _vxy, float scale, Color[] paints) {
+	private Overlay getDrawing(ArrayList<float[]> _vxy, float scale, Color[] paints)
+	{
 
 		Overlay ovout = new Overlay();
 		PointRoi center = new PointRoi(x0+.5f, y0+.5f);
@@ -210,7 +216,8 @@ public class MeanShiftDirection implements PlugIn {
 
 	}
 
-	private Overlay getDrawing(float[][] _vxy, float scale, Color[] paints) {
+	private Overlay getDrawing(float[][] _vxy, float scale, Color[] paints)
+	{
 
 		Overlay ovout = new Overlay();
 		PointRoi center = new PointRoi(x0+.5f, y0+.5f);
@@ -310,6 +317,7 @@ public class MeanShiftDirection implements PlugIn {
 
 		boolean[] checked = new boolean[labels.length];
 		ArrayList<float[]> out = new ArrayList<float[]>();
+		ArrayList<Integer> cnt = new ArrayList<Integer>();    		// to make sure that it outputs sorted list
 
 		for (int i = 0; i < labels.length; i++) {
 			if (!checked[i]) {
@@ -335,12 +343,28 @@ public class MeanShiftDirection implements PlugIn {
 
 				if (count >= min_count) {
 					out.add(new float[]{centroid_x/count, centroid_y/count});
+					cnt.add(count);
 				}
 
 			}
 		}
 
-		return out;
+
+		// print before sorting
+		for (int ii = 0; ii < cnt.size(); ii++) {
+			IJ.log(ii + " : " + cnt.get(ii) + " points,  at " + Arrays.toString(out.get(ii)));
+		}
+
+
+		// sort by the counts (take from Sorting.java)
+		int[] desc_idx = Sorting.descending(cnt);      // it will change cnt list
+
+		ArrayList<float[]> out_sorted = new ArrayList<float[]>(4); // top 4  if there are as many
+		int clusters_nr = (desc_idx.length>4)? 4 : desc_idx.length ;
+		for (int ii=0; ii<clusters_nr; ii++) {
+			out_sorted.add(out.get(desc_idx[ii])); // add top 1,2,3 or 4 directions based on the count
+		}
+		return out_sorted;
 
 	}
 
