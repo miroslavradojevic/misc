@@ -331,7 +331,8 @@ public class ClusteringDemo {
 	/*
 		use output of clustering to give out the final cluster centroids
 	 */
-    public static ArrayList<float[]> extracting(int[] labels, int[] vals) { // int[] idxs,
+    public static ArrayList<float[]> extracting(int[] labels, int[] vals)
+    { // int[] idxs,
 
         boolean[] checked = new boolean[labels.length];
         ArrayList<float[]> out = new ArrayList<float[]>();

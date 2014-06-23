@@ -58,9 +58,4 @@ public class Dummy1 {
 		arg.get(0).clear();
 	}
 
-	private static void clean_element()
-	{
-
-	}
-
 }
