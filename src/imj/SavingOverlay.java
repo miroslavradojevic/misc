@@ -21,7 +21,6 @@ import java.util.Random;
 public class SavingOverlay implements PlugIn {
 
 	int W = 512, H = 512;
-	float R = W/8f;
 
 	public void run(String s) {
 
@@ -49,12 +48,14 @@ public class SavingOverlay implements PlugIn {
 
 		Overlay ov = new Overlay();
 
+        System.out.println("adding overlay components..");
+
 		// red oval
 		OvalRoi ovalroi = new OvalRoi(x1-r1, y1-r1, 2*r1, 2*r1);
 		ovalroi.setFillColor(c1);
 		ovalroi.setStrokeColor(c1);
 		ov.add(ovalroi);
-		System.out.println("added "+c1+" oval at:\t" + x1 + " , " + y1 + ", " + r1 );
+		System.out.println(c1+" oval at:\t" + x1 + " , " + y1 + ", " + r1 );
 
 		// red line
 		Line ln = new Line(x1, y1, x1-r1, y1-r1);
@@ -80,7 +81,7 @@ public class SavingOverlay implements PlugIn {
 		ovalroi.setFillColor(c2);
 		ovalroi.setStrokeColor(c2);
 		ov.add(ovalroi);
-		System.out.println("added "+Color.YELLOW+" oval at:\t" + x2 + " , " + y2 + ", " + r2 );
+		System.out.println(Color.YELLOW+" oval at:\t" + x2 + " , " + y2 + ", " + r2 );
 
 		ln = new Line(x2, y2, x2+Math.sqrt(2)*r2, y2);
 		ln.setStrokeWidth(r2/4f);
@@ -91,7 +92,7 @@ public class SavingOverlay implements PlugIn {
 		imp.setOverlay(ov);
 
 		// save overlay  as zip
-		System.out.println("saving overlay...");
+		System.out.println("\nsaving overlay...");
 		RoiManager rm = new RoiManager();
 		for (int i = 0; i < ov.size(); i++) {
 			rm.addRoi(ov.get(i));
@@ -115,14 +116,9 @@ public class SavingOverlay implements PlugIn {
 		Overlay ov_read = new Overlay();
 		for (int i = 0; i < out.length; i++) {
 
-			if (out[i].getType()==1) {
+			if (out[i].getType()==1) { // 1 is for OvalRoi
 
 				float xc = (float) out[i].getBounds().getX();
-
-//				System.out.println("1: " + xc);
-//				System.out.println("2: " + out[i].getXBase());
-//				System.out.println("3: " + out[i].getFloatBounds());
-
 				float yc = (float) out[i].getBounds().getY();
 				float rc = (float) out[i].getBounds().getWidth();
 
