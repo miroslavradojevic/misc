@@ -38,7 +38,7 @@ public class MyHessianDemo implements PlugInFilter {
 
 		// extract hessian eigen values and eigen vectors for different scales
 
-		scale               = Prefs.get("advantra.critpoint.scale", 1.5);
+		scale               = 3;//Prefs.get("advantra.critpoint.scale", 3);
 
 		GenericDialog gd 	= new GenericDialog("NEURITENESS");
 		gd.addNumericField("scale ",  scale, 1, 10, " pix");
@@ -47,7 +47,7 @@ public class MyHessianDemo implements PlugInFilter {
 		if (gd.wasCanceled()) return;
 
 		scale               =  gd.getNextNumber();
-		Prefs.set("advantra.critpoint.scale",   scale);
+//		Prefs.set("advantra.critpoint.scale",   scale);
 
 		Dimensions dims 		= im.dimensions();
 		Dimensions new_dims 	= new Dimensions(img.getWidth(), img.getHeight(), 1);

@@ -13,7 +13,6 @@ public class JustOpen implements PlugIn {
 
 		IJ.open();
 		ImagePlus curr_img = IJ.getImage();
-
 		System.out.println("testing... \nimage name: " + curr_img.getShortTitle());
 
 	}

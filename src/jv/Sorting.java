@@ -6,6 +6,8 @@ import java.util.Random;
 
 /**
  * Created by miroslav on 6/11/14.
+ * example call:
+ * java -cp /home/miroslav/jarlib/*:/home/miroslav/misc/misc_.jar  jv.Sorting
  */
 public class Sorting {
 
