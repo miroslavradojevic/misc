@@ -8,6 +8,7 @@ package imj.hessian;
  */
 import java.util.Vector;
 
+import flanagan.math.Matrix;
 import ij.ImagePlus;
 import ij.process.FloatProcessor;
 
@@ -18,8 +19,6 @@ import imagescience.image.Coordinates;
 import imagescience.image.Dimensions;
 import imagescience.image.FloatImage;
 import imagescience.image.Image;
-
-import flanagan.math.Matrix;
 
 public class MyHessian extends Hessian {
 

@@ -60,8 +60,8 @@ public class Mouse_Listener_2 implements PlugIn, MouseListener {
 		if(ip_load==null) return;
 		ip_load.show();
 
-		int cnt = WindowManager.getImageCount();
-		IJ.log(cnt+" images shown");
+//		int cnt = WindowManager.getImageCount();
+//		IJ.log(cnt+" images shown");
 
 		can = ip_load.getCanvas();
 		can.addMouseListener(this);
